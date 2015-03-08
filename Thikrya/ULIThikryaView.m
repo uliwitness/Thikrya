@@ -143,6 +143,13 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 }
 
 
+-(void)	showInsertionMark
+{
+	insertionMarkVisible = YES;
+	[insertionMarkTimer setFireDate: [NSDate dateWithTimeIntervalSinceNow: insertionMarkTimer.timeInterval]];
+}
+
+
 -(void)	toggleInsertionMark: (NSTimer*)sender
 {
 	insertionMarkVisible = !insertionMarkVisible;
@@ -231,7 +238,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		}
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
@@ -274,7 +281,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -310,7 +317,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -320,7 +327,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	selectedRange.location = 0;
 	
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -330,7 +337,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	selectedRange.length = caps.name.length -selectedRange.location;
 	
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -348,7 +355,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -363,7 +370,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -394,7 +401,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -426,7 +433,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
@@ -461,7 +468,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		}
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
@@ -485,7 +492,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		}
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
@@ -505,7 +512,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
 	}
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 	[self setNeedsDisplay: YES];
 }
 
@@ -520,7 +527,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	selectedRange.length = 0;
 		selectedRange.location += insertString.length;
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
@@ -594,7 +601,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	
-	insertionMarkVisible = YES;
+	[self showInsertionMark];
 }
 
 
