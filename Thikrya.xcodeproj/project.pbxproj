@@ -1,0 +1,488 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5539D7D31922A91F00C31577 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5539D7D21922A91F00C31577 /* Cocoa.framework */; };
+		5539D7DD1922A91F00C31577 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5539D7DB1922A91F00C31577 /* InfoPlist.strings */; };
+		5539D7DF1922A91F00C31577 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5539D7DE1922A91F00C31577 /* main.m */; };
+		5539D7E31922A91F00C31577 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5539D7E11922A91F00C31577 /* Credits.rtf */; };
+		5539D7E61922A91F00C31577 /* ULIAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5539D7E51922A91F00C31577 /* ULIAppDelegate.m */; };
+		5539D7E91922A91F00C31577 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5539D7E71922A91F00C31577 /* MainMenu.xib */; };
+		5539D7EB1922A91F00C31577 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5539D7EA1922A91F00C31577 /* Images.xcassets */; };
+		5539D7F21922A91F00C31577 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5539D7F11922A91F00C31577 /* XCTest.framework */; };
+		5539D7F31922A91F00C31577 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5539D7D21922A91F00C31577 /* Cocoa.framework */; };
+		5539D7FB1922A91F00C31577 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5539D7F91922A91F00C31577 /* InfoPlist.strings */; };
+		5539D7FD1922A91F00C31577 /* ThikryaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5539D7FC1922A91F00C31577 /* ThikryaTests.m */; };
+		5539D8081922A97900C31577 /* ULIThikryaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5539D8071922A97900C31577 /* ULIThikryaView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5539D7F41922A91F00C31577 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5539D7C71922A91F00C31577 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5539D7CE1922A91F00C31577;
+			remoteInfo = Thikrya;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5539D7CF1922A91F00C31577 /* Thikrya.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thikrya.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5539D7D21922A91F00C31577 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		5539D7D51922A91F00C31577 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		5539D7D61922A91F00C31577 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		5539D7D71922A91F00C31577 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5539D7DA1922A91F00C31577 /* Thikrya-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Thikrya-Info.plist"; sourceTree = "<group>"; };
+		5539D7DC1922A91F00C31577 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5539D7DE1922A91F00C31577 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5539D7E01922A91F00C31577 /* Thikrya-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Thikrya-Prefix.pch"; sourceTree = "<group>"; };
+		5539D7E21922A91F00C31577 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		5539D7E41922A91F00C31577 /* ULIAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ULIAppDelegate.h; sourceTree = "<group>"; };
+		5539D7E51922A91F00C31577 /* ULIAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ULIAppDelegate.m; sourceTree = "<group>"; };
+		5539D7E81922A91F00C31577 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		5539D7EA1922A91F00C31577 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		5539D7F01922A91F00C31577 /* ThikryaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThikryaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5539D7F11922A91F00C31577 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		5539D7F81922A91F00C31577 /* ThikryaTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ThikryaTests-Info.plist"; sourceTree = "<group>"; };
+		5539D7FA1922A91F00C31577 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5539D7FC1922A91F00C31577 /* ThikryaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThikryaTests.m; sourceTree = "<group>"; };
+		5539D8061922A97900C31577 /* ULIThikryaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ULIThikryaView.h; sourceTree = "<group>"; };
+		5539D8071922A97900C31577 /* ULIThikryaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ULIThikryaView.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5539D7CC1922A91F00C31577 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5539D7D31922A91F00C31577 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5539D7ED1922A91F00C31577 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5539D7F31922A91F00C31577 /* Cocoa.framework in Frameworks */,
+				5539D7F21922A91F00C31577 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5539D7C61922A91F00C31577 = {
+			isa = PBXGroup;
+			children = (
+				5539D7D81922A91F00C31577 /* Thikrya */,
+				5539D7F61922A91F00C31577 /* ThikryaTests */,
+				5539D7D11922A91F00C31577 /* Frameworks */,
+				5539D7D01922A91F00C31577 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5539D7D01922A91F00C31577 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7CF1922A91F00C31577 /* Thikrya.app */,
+				5539D7F01922A91F00C31577 /* ThikryaTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5539D7D11922A91F00C31577 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7D21922A91F00C31577 /* Cocoa.framework */,
+				5539D7F11922A91F00C31577 /* XCTest.framework */,
+				5539D7D41922A91F00C31577 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5539D7D41922A91F00C31577 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7D51922A91F00C31577 /* AppKit.framework */,
+				5539D7D61922A91F00C31577 /* CoreData.framework */,
+				5539D7D71922A91F00C31577 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		5539D7D81922A91F00C31577 /* Thikrya */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7E41922A91F00C31577 /* ULIAppDelegate.h */,
+				5539D7E51922A91F00C31577 /* ULIAppDelegate.m */,
+				5539D8061922A97900C31577 /* ULIThikryaView.h */,
+				5539D8071922A97900C31577 /* ULIThikryaView.m */,
+				5539D7E71922A91F00C31577 /* MainMenu.xib */,
+				5539D7EA1922A91F00C31577 /* Images.xcassets */,
+				5539D7D91922A91F00C31577 /* Supporting Files */,
+			);
+			path = Thikrya;
+			sourceTree = "<group>";
+		};
+		5539D7D91922A91F00C31577 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7DA1922A91F00C31577 /* Thikrya-Info.plist */,
+				5539D7DB1922A91F00C31577 /* InfoPlist.strings */,
+				5539D7DE1922A91F00C31577 /* main.m */,
+				5539D7E01922A91F00C31577 /* Thikrya-Prefix.pch */,
+				5539D7E11922A91F00C31577 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5539D7F61922A91F00C31577 /* ThikryaTests */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7FC1922A91F00C31577 /* ThikryaTests.m */,
+				5539D7F71922A91F00C31577 /* Supporting Files */,
+			);
+			path = ThikryaTests;
+			sourceTree = "<group>";
+		};
+		5539D7F71922A91F00C31577 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5539D7F81922A91F00C31577 /* ThikryaTests-Info.plist */,
+				5539D7F91922A91F00C31577 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5539D7CE1922A91F00C31577 /* Thikrya */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5539D8001922A91F00C31577 /* Build configuration list for PBXNativeTarget "Thikrya" */;
+			buildPhases = (
+				5539D7CB1922A91F00C31577 /* Sources */,
+				5539D7CC1922A91F00C31577 /* Frameworks */,
+				5539D7CD1922A91F00C31577 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Thikrya;
+			productName = Thikrya;
+			productReference = 5539D7CF1922A91F00C31577 /* Thikrya.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5539D7EF1922A91F00C31577 /* ThikryaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5539D8031922A91F00C31577 /* Build configuration list for PBXNativeTarget "ThikryaTests" */;
+			buildPhases = (
+				5539D7EC1922A91F00C31577 /* Sources */,
+				5539D7ED1922A91F00C31577 /* Frameworks */,
+				5539D7EE1922A91F00C31577 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5539D7F51922A91F00C31577 /* PBXTargetDependency */,
+			);
+			name = ThikryaTests;
+			productName = ThikryaTests;
+			productReference = 5539D7F01922A91F00C31577 /* ThikryaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5539D7C71922A91F00C31577 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = ULI;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Uli Kusterer";
+				TargetAttributes = {
+					5539D7EF1922A91F00C31577 = {
+						TestTargetID = 5539D7CE1922A91F00C31577;
+					};
+				};
+			};
+			buildConfigurationList = 5539D7CA1922A91F00C31577 /* Build configuration list for PBXProject "Thikrya" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5539D7C61922A91F00C31577;
+			productRefGroup = 5539D7D01922A91F00C31577 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5539D7CE1922A91F00C31577 /* Thikrya */,
+				5539D7EF1922A91F00C31577 /* ThikryaTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5539D7CD1922A91F00C31577 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5539D7DD1922A91F00C31577 /* InfoPlist.strings in Resources */,
+				5539D7EB1922A91F00C31577 /* Images.xcassets in Resources */,
+				5539D7E31922A91F00C31577 /* Credits.rtf in Resources */,
+				5539D7E91922A91F00C31577 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5539D7EE1922A91F00C31577 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5539D7FB1922A91F00C31577 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5539D7CB1922A91F00C31577 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5539D7DF1922A91F00C31577 /* main.m in Sources */,
+				5539D7E61922A91F00C31577 /* ULIAppDelegate.m in Sources */,
+				5539D8081922A97900C31577 /* ULIThikryaView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5539D7EC1922A91F00C31577 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5539D7FD1922A91F00C31577 /* ThikryaTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5539D7F51922A91F00C31577 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5539D7CE1922A91F00C31577 /* Thikrya */;
+			targetProxy = 5539D7F41922A91F00C31577 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5539D7DB1922A91F00C31577 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5539D7DC1922A91F00C31577 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		5539D7E11922A91F00C31577 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5539D7E21922A91F00C31577 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		5539D7E71922A91F00C31577 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5539D7E81922A91F00C31577 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		5539D7F91922A91F00C31577 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5539D7FA1922A91F00C31577 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5539D7FE1922A91F00C31577 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5539D7FF1922A91F00C31577 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5539D8011922A91F00C31577 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Thikrya/Thikrya-Prefix.pch";
+				INFOPLIST_FILE = "Thikrya/Thikrya-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		5539D8021922A91F00C31577 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Thikrya/Thikrya-Prefix.pch";
+				INFOPLIST_FILE = "Thikrya/Thikrya-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		5539D8041922A91F00C31577 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Thikrya.app/Contents/MacOS/Thikrya";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Thikrya/Thikrya-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ThikryaTests/ThikryaTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		5539D8051922A91F00C31577 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Thikrya.app/Contents/MacOS/Thikrya";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Thikrya/Thikrya-Prefix.pch";
+				INFOPLIST_FILE = "ThikryaTests/ThikryaTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5539D7CA1922A91F00C31577 /* Build configuration list for PBXProject "Thikrya" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5539D7FE1922A91F00C31577 /* Debug */,
+				5539D7FF1922A91F00C31577 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5539D8001922A91F00C31577 /* Build configuration list for PBXNativeTarget "Thikrya" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5539D8011922A91F00C31577 /* Debug */,
+				5539D8021922A91F00C31577 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5539D8031922A91F00C31577 /* Build configuration list for PBXNativeTarget "ThikryaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5539D8041922A91F00C31577 /* Debug */,
+				5539D8051922A91F00C31577 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5539D7C71922A91F00C31577 /* Project object */;
+}
