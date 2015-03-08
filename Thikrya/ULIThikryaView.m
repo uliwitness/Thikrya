@@ -9,6 +9,31 @@
 #import "ULIThikryaView.h"
 
 
+static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString* str )
+{
+	NSInteger	x = 0, count = str.length;
+	CGFloat		lastXPos = 0;
+	while( x < count )
+	{
+		NSRange	seqRange = [str.string rangeOfComposedCharacterSequenceAtIndex: x];
+		NSAttributedString*	substr = [str attributedSubstringFromRange: NSMakeRange(0,seqRange.location+seqRange.length)];
+		NSSize	measuredSize = [substr size];
+		if( xpos <= measuredSize.width )
+		{
+			if( xpos <= (lastXPos +((measuredSize.width -lastXPos) /2)) )	// We hit this character in its first half?
+				return x;
+			// Second half will be covered by next character, because mouse loc is closer to the end of this character, and cursors are always between characters.
+		}
+		
+		lastXPos = measuredSize.width;
+		x += seqRange.length;
+	}
+	
+	return count;
+}
+
+
+
 @interface ULIThikryaView ()
 {
 	BOOL		isFirstResponder;
@@ -33,6 +58,19 @@
 	return self;
 }
 
+
+-(NSDictionary*)	textAttributes
+{
+	return @{ NSFontAttributeName: [NSFont fontWithName: @"Avenir Next" size: 16] };
+}
+
+
+-(NSPoint)	textPosInRect: (NSRect)inBox
+{
+	return NSMakePoint(NSMinX(inBox) +12,NSMinY(inBox));
+}
+
+
 -(void)	drawInRect: (NSRect)inBox selected: (BOOL)isSelected selectedRange: (NSRange)selectedRange insertionMarkVisible: (BOOL)insertionMarkVisible
 {
 	if( isSelected )
@@ -45,9 +83,9 @@
 	}
 //	[NSBezierPath strokeRect: inBox];
 	
-	NSDictionary				*	attrs = @{ NSFontAttributeName: [NSFont fontWithName: @"Avenir Next" size: 16] };
+	NSDictionary				*	attrs = self.textAttributes;
 	NSMutableAttributedString	*	attrStr = [[NSMutableAttributedString alloc] initWithString: self.name attributes: attrs];
-	NSPoint							textPos = NSMakePoint(NSMinX(inBox) +12,NSMinY(inBox));
+	NSPoint							textPos = [self textPosInRect: inBox];
 	if( isSelected )
 	{
 		if( selectedRange.length > 0 )
@@ -64,6 +102,14 @@
 		}
 	}
 	[attrStr drawAtPoint: textPos];
+}
+
+
+-(NSInteger)	selectedIndexFromPoint: (NSPoint)pos inRect: (NSRect)inBox
+{
+	NSDictionary				*	attrs = self.textAttributes;
+	NSMutableAttributedString	*	attrStr = [[NSMutableAttributedString alloc] initWithString: self.name attributes: attrs];
+	return CharacterIndexAtXPosOfString( pos.x -[self textPosInRect: inBox].x, attrStr );
 }
 
 @end
@@ -160,6 +206,10 @@
 		if( NSPointInRect( pos, box) )
 		{
 			editedCapsule = idx;
+			selectedRange.location = [self.capsules[idx] selectedIndexFromPoint: pos inRect: box];
+			if( selectedRange.location == NSNotFound )
+				selectedRange.location = [self.capsules[editedCapsule] name].length;
+			selectedRange.length = 0;
 			break;
 		}
 		box.origin.y += box.size.height;
@@ -170,14 +220,18 @@
 		while( true )	// Insert as many empty lines as needed to let the user enter text there.
 		{
 			[self.capsules addObject: [ULIThikryaCapsule new]];
-			editedCapsule = count++;
-			NSRect	box = [self rectForCapsuleAtIndex: editedCapsule];
+			NSRect	box = [self rectForCapsuleAtIndex: count];
 			if( NSPointInRect( pos, box ) )
+			{
+				editedCapsule = count;
+				selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
 				break;
+			}
+			count++;
 		}
 	}
-	selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
 	
+	insertionMarkVisible = YES;
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
@@ -438,14 +492,21 @@
 
 -(void)	insertNewline:(id)sender
 {
-	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
-
-	[self.capsules insertObject: [ULIThikryaCapsule new] atIndex: editedCapsule +1];
-	editedCapsule++;
-	selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+	if( selectedRange.location == 0 && selectedRange.length == 0 )
+	{
+		[self.capsules insertObject: [ULIThikryaCapsule new] atIndex: editedCapsule];
+		editedCapsule++;
+		selectedRange = NSMakeRange( 0, 0 );
+	}
+	else
+	{
+		[self.capsules insertObject: [ULIThikryaCapsule new] atIndex: editedCapsule +1];
+		editedCapsule++;
+		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+	}
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	[self setNeedsDisplay: YES];
 }
 
 
@@ -594,3 +655,5 @@
 }
 
 @end
+
+
