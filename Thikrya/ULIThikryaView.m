@@ -35,9 +35,6 @@
 
 -(void)	drawInRect: (NSRect)inBox selected: (BOOL)isSelected selectedRange: (NSRange)selectedRange insertionMarkVisible: (BOOL)insertionMarkVisible
 {
-	[[NSColor lightGrayColor] set];
-	[NSBezierPath fillRect: inBox];
-	
 	if( isSelected )
 	{
 		[[NSColor keyboardFocusIndicatorColor] set];
@@ -46,7 +43,7 @@
 	{
 		[[NSColor darkGrayColor] set];
 	}
-	[NSBezierPath strokeRect: inBox];
+//	[NSBezierPath strokeRect: inBox];
 	
 	NSDictionary				*	attrs = @{ NSFontAttributeName: [NSFont fontWithName: @"Avenir Next" size: 16] };
 	NSMutableAttributedString	*	attrStr = [[NSMutableAttributedString alloc] initWithString: self.name attributes: attrs];
@@ -107,8 +104,22 @@
 }
 
 
+-(NSRect)	rectForCapsuleAtIndex: (NSInteger)idx
+{
+	NSRect		box = self.bounds;
+	box.size.height = 32;
+	
+	box.origin.y += box.size.height * idx;
+	
+	return box;
+}
+
+
 -(void)	drawRect: (NSRect)dirtyRect
 {
+	[[NSColor controlBackgroundColor] set];
+	[NSBezierPath fillRect: dirtyRect];
+	
 	NSRect		box = self.bounds;
 	NSRect		selectedRect = NSZeroRect;
 	
@@ -117,19 +128,21 @@
 	NSInteger	idx = 0;
 	for( ULIThikryaCapsule* currCapsule in self.capsules )
 	{
-		BOOL	isSelected = (idx++) == editedCapsule && isFirstResponder;
-		[currCapsule drawInRect: box selected: isSelected selectedRange: selectedRange insertionMarkVisible: insertionMarkVisible];
-		if( isSelected )
-			selectedRect = box;
-		box.origin.y += box.size.height;
+		NSRect	box = [self rectForCapsuleAtIndex: idx];
+		if( NSIntersectsRect( dirtyRect, box ) )
+		{
+			BOOL	isSelected = (idx == editedCapsule && isFirstResponder);
+			[currCapsule drawInRect: box selected: isSelected selectedRange: selectedRange insertionMarkVisible: insertionMarkVisible];
+			if( isSelected )
+				selectedRect = box;
+		}
+		idx++;
 	}
 	
 	[NSColor.keyboardFocusIndicatorColor set];
 	[NSBezierPath setDefaultLineWidth: 2];
-	[NSBezierPath setDefaultLineJoinStyle: NSRoundLineJoinStyle];
-	[NSBezierPath strokeRect: NSInsetRect(selectedRect,1,1)];
+	[[NSBezierPath bezierPathWithRoundedRect: NSInsetRect(selectedRect,1,1) xRadius: 4 yRadius: 4] stroke];
 	[NSBezierPath setDefaultLineWidth: 1];
-	[NSBezierPath setDefaultLineJoinStyle: NSMiterLineJoinStyle];
 }
 
 
@@ -137,26 +150,35 @@
 {
 	NSPoint	pos = [self convertPoint: theEvent.locationInWindow fromView: nil];
 	
-	NSRect		box = self.bounds;
-	box.size.height = 32;
-	
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+
 	editedCapsule = NSNotFound;
 	NSInteger	idx = 0, count = self.capsules.count;
 	for( idx = 0; idx < count; idx++ )
 	{
+		NSRect	box = [self rectForCapsuleAtIndex: idx];
 		if( NSPointInRect( pos, box) )
+		{
 			editedCapsule = idx;
+			break;
+		}
 		box.origin.y += box.size.height;
 	}
 	
 	if( editedCapsule == NSNotFound )	// Click below existing rows?
 	{
-		[self.capsules addObject: [ULIThikryaCapsule new]];
-		editedCapsule = count;
+		while( true )	// Insert as many empty lines as needed to let the user enter text there.
+		{
+			[self.capsules addObject: [ULIThikryaCapsule new]];
+			editedCapsule = count++;
+			NSRect	box = [self rectForCapsuleAtIndex: editedCapsule];
+			if( NSPointInRect( pos, box ) )
+				break;
+		}
 	}
 	selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
 	
-	[self setNeedsDisplay: YES];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
 
@@ -170,12 +192,14 @@
 {
 	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 	NSString			*	oldName = caps.name;
-	if( oldName.length == 0 )
+	if( oldName.length == 0 && self.capsules.count > 1 )
 	{
 		[self.capsules removeObjectAtIndex: editedCapsule];
 		if( editedCapsule > 0 )
 			editedCapsule--;
 		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+	
+		[self setNeedsDisplay: YES];
 	}
 	else if( selectedRange.length == 0 && (selectedRange.location > 0) )
 	{
@@ -184,13 +208,19 @@
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	else
 	{
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+	
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
+	
+	insertionMarkVisible = YES;
 }
 
 
@@ -198,12 +228,14 @@
 {
 	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 	NSString			*	oldName = caps.name;
-	if( oldName.length == 0 )
+	if( oldName.length == 0 && self.capsules.count > 1 )
 	{
 		[self.capsules removeObjectAtIndex: editedCapsule];
 		if( editedCapsule >= self.capsules.count )
 			editedCapsule = self.capsules.count -1;
 		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+		
+		[self setNeedsDisplay: YES];
 	}
 	else if( selectedRange.length == 0 && (selectedRange.location < oldName.length) )
 	{
@@ -212,13 +244,72 @@
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	else
 	{
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
+	
+	insertionMarkVisible = YES;
+}
+
+
+-(void)	moveUpAndModifySelection:(id)sender
+{
+	selectedRange.length += selectedRange.location;
+	selectedRange.location = 0;
+	
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	insertionMarkVisible = YES;
+}
+
+
+-(void)	moveDownAndModifySelection:(id)sender
+{
+	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
+	selectedRange.length = caps.name.length -selectedRange.location;
+	
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	insertionMarkVisible = YES;
+}
+
+
+-(void)	moveLeftAndModifySelection:(id)sender
+{
+	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
+	if( selectedRange.location > 0 )
+	{
+		NSInteger	newLoc = selectedRange.location;
+		newLoc--;
+		newLoc = [caps.name rangeOfComposedCharacterSequenceAtIndex: newLoc].location;	// Make sure we didn't just jump half a 4-byte Unicode character backwards.
+		selectedRange.length += selectedRange.location -newLoc;
+		selectedRange.location = newLoc;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	}
+	
+	insertionMarkVisible = YES;
+}
+
+
+-(void)	moveRightAndModifySelection:(id)sender
+{
+	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
+	if( (selectedRange.location +selectedRange.length) < caps.name.length )
+	{
+		NSRange	sequenceRange = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location];	// Determine length of character in case it was a 4-byte sequence like an Emoji.
+		selectedRange.length += sequenceRange.length;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	}
+	
+	insertionMarkVisible = YES;
 }
 
 
@@ -226,21 +317,30 @@
 {
 	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 	if( selectedRange.length > 0 )
+	{
 		selectedRange.length = 0;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	}
 	else if( selectedRange.location > 0 )
 	{
 		selectedRange.location--;
 		selectedRange.location = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location].location;	// Make sure we didn't just jump half a 4-byte Unicode character backwards.
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	else if( selectedRange.location == 0 && editedCapsule > 0 )
 	{
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+		
 		editedCapsule --;
 		selectedRange.length = 0;
 		selectedRange.location = [self.capsules[editedCapsule] name].length;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplay: YES];
 }
 
 
@@ -251,21 +351,40 @@
 	{
 		selectedRange.location += selectedRange.length;
 		selectedRange.length = 0;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	else if( (selectedRange.location +selectedRange.length) < caps.name.length )
 	{
 		NSRange	sequenceRange = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location];	// Determine length of character in case it was a 4-byte sequence like an Emoji.
 		selectedRange.location = sequenceRange.location +sequenceRange.length;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	else if( editedCapsule < (self.capsules.count -1) )
 	{
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+		
 		editedCapsule ++;
 		selectedRange.location = 0;
 		selectedRange.length = 0;
+		
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplay: YES];
+}
+
+
+-(void)	insertTab:(id)sender
+{
+	[self moveDown: sender];
+}
+
+
+-(void)	insertBacktab:(id)sender
+{
+	[self moveUp: sender];
 }
 
 
@@ -273,6 +392,8 @@
 {
 	if( editedCapsule > 0 )
 	{
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+		
 		editedCapsule --;
 		if( (selectedRange.location +selectedRange.length) >= [self.capsules[editedCapsule] name].length )
 		{
@@ -287,7 +408,7 @@
 	}
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplay: YES];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
 
@@ -295,6 +416,8 @@
 {
 	if( editedCapsule < (self.capsules.count -1) )
 	{
+		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+		
 		editedCapsule ++;
 		if( (selectedRange.location +selectedRange.length) >= [self.capsules[editedCapsule] name].length )
 		{
@@ -309,18 +432,20 @@
 	}
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplay: YES];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
 
 -(void)	insertNewline:(id)sender
 {
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+
 	[self.capsules insertObject: [ULIThikryaCapsule new] atIndex: editedCapsule +1];
 	editedCapsule++;
 	selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplay: YES];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
 
@@ -335,7 +460,7 @@
 		selectedRange.location += insertString.length;
 	
 	insertionMarkVisible = YES;
-	[self setNeedsDisplay: YES];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 }
 
 
@@ -406,7 +531,9 @@
 		selectedRange.length = 0;
 	}
 	
-	[self setNeedsDisplay: YES];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+	
+	insertionMarkVisible = YES;
 }
 
 
@@ -434,6 +561,8 @@
 		[self performSelector: aSelector withObject: self];
 #pragma clang diagnostic pop
 	}
+	else
+		NSLog( @"%@", NSStringFromSelector(aSelector) );
 }
 
 
