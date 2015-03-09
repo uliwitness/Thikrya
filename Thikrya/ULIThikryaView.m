@@ -33,14 +33,36 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 }
 
 
+typedef struct _ULISignedRange
+{
+	NSInteger	location;
+	NSInteger	length;
+} ULISignedRange;
+
+
+static NSRange	ULISignedRangeToUnsigned( ULISignedRange inRange )
+{
+	if( inRange.length < 0 )
+		return NSMakeRange(inRange.location +inRange.length, -inRange.length);
+	else
+		return NSMakeRange(inRange.location, inRange.length);
+}
+
+
+static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
+{
+	return (ULISignedRange){ inRange.location, inRange.length };
+}
+
 
 @interface ULIThikryaView ()
 {
-	BOOL		isFirstResponder;
-	NSInteger	editedCapsule;
-	NSRange		selectedRange;
-	NSTimer*	insertionMarkTimer;
-	BOOL		insertionMarkVisible;
+	BOOL			isFirstResponder;
+	NSInteger		editedCapsule;
+	NSRange			selectedRange;
+	ULISignedRange	trackingSelectedRange;
+	NSTimer*		insertionMarkTimer;
+	BOOL			insertionMarkVisible;
 }
 
 @end
@@ -217,9 +239,9 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 			if( selectedRange.location == NSNotFound )
 				selectedRange.location = [self.capsules[editedCapsule] name].length;
 			selectedRange.length = 0;
+			trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 			break;
 		}
-		box.origin.y += box.size.height;
 	}
 	
 	if( editedCapsule == NSNotFound )	// Click below existing rows?
@@ -232,11 +254,27 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 			{
 				editedCapsule = count;
 				selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+				trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 				break;
 			}
 			count++;
 		}
 	}
+	
+	[self showInsertionMark];
+	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
+}
+
+
+-(void)	mouseDragged: (NSEvent *)theEvent
+{
+	ULIThikryaCapsule*	caps = self.capsules[editedCapsule];
+	NSPoint				pos = [self convertPoint: theEvent.locationInWindow fromView: nil];
+	NSRect				box = [self rectForCapsuleAtIndex: editedCapsule];
+	NSInteger			mouseCharIdx = [caps selectedIndexFromPoint: pos inRect: box];
+	
+	trackingSelectedRange.length = mouseCharIdx -selectedRange.location;
+	selectedRange = ULISignedRangeToUnsigned(trackingSelectedRange);
 	
 	[self showInsertionMark];
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
@@ -259,6 +297,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		if( editedCapsule > 0 )
 			editedCapsule--;
 		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	
 		[self setNeedsDisplay: YES];
 	}
@@ -269,6 +308,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -277,6 +317,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -295,6 +336,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		if( editedCapsule >= self.capsules.count )
 			editedCapsule = self.capsules.count -1;
 		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplay: YES];
 	}
@@ -305,6 +347,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -313,6 +356,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: @""];
 		caps.name = newName;
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -323,8 +367,8 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 
 -(void)	moveUpAndModifySelection:(id)sender
 {
-	selectedRange.length += selectedRange.location;
-	selectedRange.location = 0;
+	trackingSelectedRange.length = -trackingSelectedRange.location;
+	selectedRange = ULISignedRangeToUnsigned( trackingSelectedRange );
 	
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	[self showInsertionMark];
@@ -334,7 +378,8 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 -(void)	moveDownAndModifySelection:(id)sender
 {
 	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
-	selectedRange.length = caps.name.length -selectedRange.location;
+	trackingSelectedRange.length = caps.name.length -trackingSelectedRange.location;
+	selectedRange = ULISignedRangeToUnsigned( trackingSelectedRange );
 	
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	[self showInsertionMark];
@@ -346,11 +391,11 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 	if( selectedRange.location > 0 )
 	{
-		NSInteger	newLoc = selectedRange.location;
-		newLoc--;
+		trackingSelectedRange.length -= 1;
+		NSInteger	newLoc = trackingSelectedRange.location + trackingSelectedRange.length;
 		newLoc = [caps.name rangeOfComposedCharacterSequenceAtIndex: newLoc].location;	// Make sure we didn't just jump half a 4-byte Unicode character backwards.
-		selectedRange.length += selectedRange.location -newLoc;
-		selectedRange.location = newLoc;
+		trackingSelectedRange.length = newLoc -trackingSelectedRange.location;
+		selectedRange = ULISignedRangeToUnsigned( trackingSelectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -364,8 +409,11 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 	if( (selectedRange.location +selectedRange.length) < caps.name.length )
 	{
-		NSRange	sequenceRange = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location];	// Determine length of character in case it was a 4-byte sequence like an Emoji.
-		selectedRange.length += sequenceRange.length;
+		NSInteger	newLoc = trackingSelectedRange.location + trackingSelectedRange.length;
+		NSRange		composedRange = [caps.name rangeOfComposedCharacterSequenceAtIndex: newLoc];
+		newLoc = composedRange.location + composedRange.length;	// Make sure we didn't just jump half a 4-byte Unicode character forward.
+		trackingSelectedRange.length = newLoc -trackingSelectedRange.location;
+		selectedRange = ULISignedRangeToUnsigned( trackingSelectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -380,6 +428,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	if( selectedRange.length > 0 )
 	{
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -387,6 +436,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	{
 		selectedRange.location--;
 		selectedRange.location = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location].location;	// Make sure we didn't just jump half a 4-byte Unicode character backwards.
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -397,6 +447,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		editedCapsule --;
 		selectedRange.length = 0;
 		selectedRange.location = [self.capsules[editedCapsule] name].length;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -412,6 +463,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	{
 		selectedRange.location += selectedRange.length;
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -419,6 +471,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	{
 		NSRange	sequenceRange = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location];	// Determine length of character in case it was a 4-byte sequence like an Emoji.
 		selectedRange.location = sequenceRange.location +sequenceRange.length;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -429,6 +482,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		editedCapsule ++;
 		selectedRange.location = 0;
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 		
 		[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
 	}
@@ -466,6 +520,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 			ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 			selectedRange.location = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location].location;	// Make sure we didn't just jump into the middle of a 4-byte Unicode character.
 		}
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	}
 	
 	[self showInsertionMark];
@@ -490,6 +545,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 			ULIThikryaCapsule	*	caps = self.capsules[editedCapsule];
 			selectedRange.location = [caps.name rangeOfComposedCharacterSequenceAtIndex: selectedRange.location].location;	// Make sure we didn't just jump into the middle of a 4-byte Unicode character.
 		}
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	}
 	
 	[self showInsertionMark];
@@ -511,6 +567,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 		editedCapsule++;
 		selectedRange = NSMakeRange( [self.capsules[editedCapsule] name].length, 0 );
 	}
+	trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	
 	[self showInsertionMark];
 	[self setNeedsDisplay: YES];
@@ -525,7 +582,8 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	NSString			*	newName = [oldName stringByReplacingCharactersInRange: selectedRange withString: insertString];
 	caps.name = newName;
 	selectedRange.length = 0;
-		selectedRange.location += insertString.length;
+	selectedRange.location += insertString.length;
+	trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	
 	[self showInsertionMark];
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
@@ -597,6 +655,7 @@ static NSInteger	CharacterIndexAtXPosOfString( CGFloat xpos, NSAttributedString*
 	{
 		selectedRange.location += [aString length];
 		selectedRange.length = 0;
+		trackingSelectedRange = ULISignedRangeFromUnsigned( selectedRange );
 	}
 	
 	[self setNeedsDisplayInRect: [self rectForCapsuleAtIndex: editedCapsule]];
