@@ -273,7 +273,7 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 	NSRect				box = [self rectForCapsuleAtIndex: editedCapsule];
 	NSInteger			mouseCharIdx = [caps selectedIndexFromPoint: pos inRect: box];
 	
-	trackingSelectedRange.length = mouseCharIdx -selectedRange.location;
+	trackingSelectedRange.length = mouseCharIdx -trackingSelectedRange.location;
 	selectedRange = ULISignedRangeToUnsigned(trackingSelectedRange);
 	
 	[self showInsertionMark];
