@@ -13,7 +13,7 @@
 
 @property (strong) NSString*	name;
 
--(void)	drawInRect: (NSRect)inBox selected: (BOOL)isSelected selectedRange: (NSRange)selectedRange insertionMarkVisible: (BOOL)insertionMarkVisible;
+-(void)	drawInRect: (NSRect)inBox selected: (BOOL)isSelected active: (BOOL)isActive selectedRange: (NSRange)selectedRange insertionMarkVisible: (BOOL)insertionMarkVisible;
 
 @end
 

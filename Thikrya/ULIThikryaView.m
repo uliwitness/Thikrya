@@ -65,6 +65,8 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 	BOOL			insertionMarkVisible;
 }
 
+@property (weak) NSWindow*	lastWindowWeWereIn;
+
 @end
 
 
@@ -93,18 +95,8 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 }
 
 
--(void)	drawInRect: (NSRect)inBox selected: (BOOL)isSelected selectedRange: (NSRange)selectedRange insertionMarkVisible: (BOOL)insertionMarkVisible
+-(void)	drawInRect: (NSRect)inBox selected: (BOOL)isSelected active: (BOOL)isActive selectedRange: (NSRange)selectedRange insertionMarkVisible: (BOOL)insertionMarkVisible
 {
-	if( isSelected )
-	{
-		[[NSColor keyboardFocusIndicatorColor] set];
-	}
-	else
-	{
-		[[NSColor darkGrayColor] set];
-	}
-//	[NSBezierPath strokeRect: inBox];
-	
 	NSDictionary				*	attrs = self.textAttributes;
 	NSMutableAttributedString	*	attrStr = [[NSMutableAttributedString alloc] initWithString: self.name attributes: attrs];
 	NSPoint							textPos = [self textPosInRect: inBox];
@@ -112,8 +104,8 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 	{
 		if( selectedRange.length > 0 )
 		{
-			[attrStr addAttribute: NSBackgroundColorAttributeName value: [NSColor selectedTextBackgroundColor] range: selectedRange];
-			[attrStr addAttribute: NSForegroundColorAttributeName value: [NSColor selectedTextColor] range: selectedRange];
+			[attrStr addAttribute: NSBackgroundColorAttributeName value: isActive ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor] range: selectedRange];
+			[attrStr addAttribute: NSForegroundColorAttributeName value: isActive ? [NSColor selectedTextColor] : [NSColor blackColor] range: selectedRange];
 		}
 		else if( insertionMarkVisible )
 		{
@@ -146,8 +138,6 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 	{
 		self.capsules = [NSMutableArray array];
 		[self.capsules addObject: [ULIThikryaCapsule new]];
-		
-		insertionMarkTimer = [NSTimer scheduledTimerWithTimeInterval: 0.5 target: self selector: @selector(toggleInsertionMark:) userInfo: nil repeats: YES];
 	}
 	return self;
 }
@@ -168,7 +158,7 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 -(void)	showInsertionMark
 {
 	insertionMarkVisible = YES;
-	[insertionMarkTimer setFireDate: [NSDate dateWithTimeIntervalSinceNow: insertionMarkTimer.timeInterval]];
+	[insertionMarkTimer setFireDate: [NSDate dateWithTimeIntervalSinceNow: insertionMarkTimer.timeInterval]];	// Make sure it stays visible for a full period and isn't immediately hidden again.
 }
 
 
@@ -200,21 +190,29 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 	
 	box.size.height = 32;
 	
+	BOOL		shouldDrawSelected = isFirstResponder && self.window.isKeyWindow;
 	NSInteger	idx = 0;
 	for( ULIThikryaCapsule* currCapsule in self.capsules )
 	{
 		NSRect	box = [self rectForCapsuleAtIndex: idx];
 		if( NSIntersectsRect( dirtyRect, box ) )
 		{
-			BOOL	isSelected = (idx == editedCapsule && isFirstResponder);
-			[currCapsule drawInRect: box selected: isSelected selectedRange: selectedRange insertionMarkVisible: insertionMarkVisible];
-			if( isSelected )
+			[currCapsule drawInRect: box selected: (idx == editedCapsule) active: shouldDrawSelected selectedRange: selectedRange insertionMarkVisible: insertionMarkVisible];
+			if( idx == editedCapsule )
 				selectedRect = box;
 		}
 		idx++;
 	}
 	
-	[NSColor.keyboardFocusIndicatorColor set];
+	if( shouldDrawSelected )
+	{
+		[[NSColor keyboardFocusIndicatorColor] set];
+	}
+	else
+	{
+		[[NSColor lightGrayColor] set];
+	}
+	
 	[NSBezierPath setDefaultLineWidth: 2];
 	[[NSBezierPath bezierPathWithRoundedRect: NSInsetRect(selectedRect,1,1) xRadius: 4 yRadius: 4] stroke];
 	[NSBezierPath setDefaultLineWidth: 1];
@@ -683,8 +681,8 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     	// We know aSelector is a void return, and this warning complains about not knowing
-		//	the return type, so it's erroneous in this case. If it wasn't, we'd have to
-		//	somehow explicitly release it.
+		//	the return type, so it's erroneous in this case. If it wasn't (e.g. aSelector
+		//	was 'new' or 'copy'), we'd have to somehow explicitly release it.
 		[self performSelector: aSelector withObject: self];
 #pragma clang diagnostic pop
 	}
@@ -709,6 +707,13 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 {
 	isFirstResponder = YES;
 	[self setNeedsDisplay: YES];
+	
+	if( !insertionMarkTimer )
+	{
+		insertionMarkTimer = [NSTimer scheduledTimerWithTimeInterval: 0.5 target: self selector: @selector(toggleInsertionMark:) userInfo: nil repeats: YES];
+		insertionMarkVisible = YES;
+	}
+	
 	return YES;
 }
 
@@ -717,7 +722,64 @@ static ULISignedRange	ULISignedRangeFromUnsigned( NSRange inRange )
 {
 	isFirstResponder = NO;
 	[self setNeedsDisplay: YES];
+	
+	[insertionMarkTimer invalidate];
+	insertionMarkTimer = nil;
+	insertionMarkVisible = NO;
+
 	return YES;
+}
+
+
+-(void)	windowActivationDidChange: (NSNotification*)notif
+{
+	[self setNeedsDisplay: YES];
+	
+	if( self.window.isKeyWindow && isFirstResponder )
+	{
+		if( !insertionMarkTimer )
+		{
+			insertionMarkTimer = [NSTimer scheduledTimerWithTimeInterval: 0.5 target: self selector: @selector(toggleInsertionMark:) userInfo: nil repeats: YES];
+			insertionMarkVisible = YES;
+		}
+	}
+	else
+	{
+		[insertionMarkTimer invalidate];
+		insertionMarkTimer = nil;
+		insertionMarkVisible = NO;
+	}
+}
+
+
+-(void)	viewDidMoveToWindow
+{
+	if( self.lastWindowWeWereIn != self.window )
+	{
+		if( self.lastWindowWeWereIn )
+		{
+			[[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidBecomeMainNotification object: self.lastWindowWeWereIn];
+			[[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: self.lastWindowWeWereIn];
+			[[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidBecomeKeyNotification object: self.lastWindowWeWereIn];
+			[[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignKeyNotification object: self.lastWindowWeWereIn];
+			[insertionMarkTimer invalidate];
+			insertionMarkTimer = nil;
+			insertionMarkVisible = NO;
+			self.lastWindowWeWereIn = nil;
+		}
+		
+		if( self.window )
+		{
+			self.lastWindowWeWereIn = self.window;
+			[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowActivationDidChange:) name: NSWindowDidBecomeMainNotification object: self.window];
+			[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowActivationDidChange:) name: NSWindowDidResignMainNotification object: self.window];
+			[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowActivationDidChange:) name: NSWindowDidBecomeKeyNotification object: self.window];
+			[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowActivationDidChange:) name: NSWindowDidResignKeyNotification object: self.window];
+			insertionMarkTimer = [NSTimer scheduledTimerWithTimeInterval: 0.5 target: self selector: @selector(toggleInsertionMark:) userInfo: nil repeats: YES];
+			insertionMarkVisible = YES;
+		}
+		[self setNeedsDisplay: YES];
+	}
 }
 
 @end
